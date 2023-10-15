@@ -8,6 +8,8 @@ export function App() {
     const [ key, setKey ] = useState('');
     const [ data, setData ] = useState('');
 
+    console.log(rows)
+
     useEffect(() => {
         const keys = Object.keys(localStorage);
 
@@ -48,8 +50,6 @@ export function App() {
     const handleDataChange = (e) => {
         setData(e.target.value);
     };
-    console.log(rows)
-
     const handleSave = () => {
         if (selectedStorage === 'local' && (key !== '' && data !== '')) {
             setRows([ ...rows ,{id: rows.length + 1, keyTb: key, value: data} ])
@@ -58,6 +58,15 @@ export function App() {
             sessionStorage.setItem(key, data);
         }
     };
+    const handleDeleteAllRows = () => {
+        const localKeys = Object.keys(localStorage);
+        const sessionKeys = Object.keys(sessionStorage);
+
+        localKeys.map(key => localStorage.removeItem(key));
+        sessionKeys.map(key => sessionStorage.removeItem(key));
+
+        setRows([]);
+    }
 
     return (
         <Container>
@@ -94,6 +103,7 @@ export function App() {
                     />)}
                 </div>
             </div>
+            <button type="button" onClick={() => handleDeleteAllRows()}>Delete All</button>
         </Container>
     )
 }
