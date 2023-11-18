@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Canvas</title>
+  </head>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+  <body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      let isMouseDown = false;
+      let cursorWidth = 10;
+      let coords = [];
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      // ctx.fillStyle = 'red'; // закраска
+      // ctx.fillRect(50, 25, 50, 50); // x, y, ширина, высота
+
+      // Круг
+      // ctx.beginPath();
+      // ctx.strokeStyle = 'green';
+      // ctx.arc(200, 100, 40, Math.PI * 2, false);
+      // ctx.stroke();
+
+      // Треугольник
+      // ctx.strokeStyle = 'red';
+      // ctx.fillStyle = 'green';
+      // ctx.lineWidth = 20;
+      // ctx.moveTo(50, 50);
+      // ctx.lineTo(100, 100);
+      // ctx.lineTo(50, 100);
+      // ctx.closePath();
+      // ctx.stroke();
+      // ctx.fill();
+
+      // Текст
+      // ctx.font = '30px Arial';
+      // ctx.fillText('Привет', 100, 100);
+
+      canvas.addEventListener('mouseup', (e) => {
+        isMouseDown = false;
+      });
+
+      canvas.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
+        ctx.beginPath();
+      });
+
+      canvas.addEventListener('mousemove', (e) => {
+        if (isMouseDown) {
+          coords.push([e.clientX, e.clientY]);
+
+          ctx.lineWidth = cursorWidth * 2;
+          ctx.lineTo(e.clientX, e.clientY);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(e.clientX, e.clientY, cursorWidth, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(e.clientX, e.clientY);
+        }
+      });
+
+      const clear = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      };
+      const replay = () => {
+        localStorage.setItem('coords', JSON.stringify(coords));
+      };
+      const save = () => {
+        let timer = setInterval(() => {
+          if (!coords.length) {
+            clearInterval(timer);
+            ctx.beginPath();
+          }
+
+          let crd = coords.shift(),
+            e = {
+              clientX: crd[0],
+              clientY: crd[1],
+            };
+
+          ctx.lineWidth = cursorWidth * 2;
+          ctx.lineTo(e.clientX, e.clientY);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(e.clientX, e.clientY, cursorWidth, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(e.clientX, e.clientY);
+        }, 30);
+      };
+
+      document.addEventListener('keydown', (e) => {
+        if (e.keyCode === 67) {
+          clear();
+        }
+
+        if (e.keyCode === 82) {
+          coords = JSON.parse(localStorage.getItem("coords"));
+
+          clear();
+          replay();
+        }
+
+        if (e.keyCode === 83) {
+          save();
+        }
+      });
+    </script>
+  </body>
+</html>
