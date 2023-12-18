@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Лабораторная работа: квадратики</title>
+    <meta charset="utf-8" />
+    <style>
+      div {
+        position: absolute;
+        padding: 0;
+        margin: 0;
+      }
+
+      div#element-red,
+      div#element-gray,
+      div#element-yellow {
+        width: 50px;
+        height: 50px;
+        top: 50px;
+      }
+
+      .element-yellow {
+        position: relative;
+        margin-top: -50px;
+        margin-left: -170px;
+      }
+      .element-red {
+        position: relative;
+        margin-top: -50px;
+        margin-left: -30px;
+      }
+      .element-gray {
+        position: relative;
+        margin-top: -50px;
+        margin-left: -100px;
+      }
+
+      div#element-red {
+        background-color: red;
+        left: 30px;
+      }
+
+      div#element-gray {
+        background-color: gray;
+        left: 100px;
+      }
+
+      div#element-yellow {
+        background-color: yellow;
+        left: 170px;
+      }
+
+      div#area-red,
+      div#area-gray,
+      div#area-yellow {
+        width: 50px;
+        height: 50px;
+        top: 120px;
+      }
+
+      div#area-yellow {
+        border: 3px solid yellow;
+        left: 10px;
+      }
+
+      div#area-red {
+        border: 3px solid red;
+        left: 100px;
+      }
+
+      div#area-gray {
+        border: 3px solid gray;
+        left: 190px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="element-red" class="element"></div>
+    <div id="element-gray" class="element"></div>
+    <div id="element-yellow" class="element"></div>
+    <div id="area-red" class="area"></div>
+    <div id="area-gray" class="area"></div>
+    <div id="area-yellow" class="area"></div>
+
+    <script>
+      const elements = document.querySelectorAll('.element');
+      let chosedElement;
+      elements.forEach((element) => {
+        element.draggable = true;
+        element.addEventListener('dragstart', (e) => {
+          chosedElement = e.target;
+          chosedElement.classList.add('selected');
+          const chosedElementStye =
+            window.getComputedStyle(chosedElement).backgroundColor;
+          let isDone = '';
+          let chosedArea;
+          const areas = document.querySelectorAll('.area');
+          areas.forEach((area) => {
+            area.addEventListener(`dragover`, (evt) => {
+              chosedArea = evt.toElement;
+              const chosedAreaStyle =
+                window.getComputedStyle(chosedArea).borderColor;
+              if (chosedAreaStyle === chosedElementStye) {
+                isDone = 'done';
+              } else {
+                isDone = '';
+              }
+            });
+          });
+          chosedElement.addEventListener('dragend', (e2) => {
+            e2.preventDefault();
+            chosedElement.classList.remove('selected');
+            if (isDone) {
+              const newDiv = document.createElement('div');
+              newDiv.id = chosedElement.id;
+              newDiv.className = `element ${chosedElement.id}`;
+              newDiv.draggable = false;
+              chosedArea.appendChild(newDiv);
+              chosedElement.style.display = 'none';
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
